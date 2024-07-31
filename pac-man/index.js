@@ -9,15 +9,14 @@ canvas.height = window.innerHeight;
 let vidas = 5; // Número inicial de vidas
 let pontuacao = 0;
 
-
+//Esse ctx se refere ao contexto da tela acima
 function desenharVidas() {
     ctx.font = '24px Arial';
     ctx.fillStyle = 'white';
     ctx.fillText('Vidas: ' + vidas, 2000, 500); // Exibe o número de vidas no canto superior esquerdo
 }
 
-
-
+//Target = alvo
 class Fantasma {
     constructor(x, y) {
         this.x = x;
@@ -25,31 +24,43 @@ class Fantasma {
         this.targetX = x;
         this.targetY = y;
         this.image = new Image();
-        this.image.src = "images/ghost.png"; // Caminho para a imagem do fantasma verde
+        this.image.src = "images/ghost.png"; 
         this.normalImage = this.image.src;
-        this.blueImage = "images/fantasmaAzul.png"; // Caminho para a imagem do fantasma azul
-        this.whiteImage = "images/fantasmaBranco.png"; // Caminho para a imagem do fantasma branco
+        this.blueImage = "images/fantasmaAzul.png"; 
+        this.whiteImage = "images/fantasmaBranco.png";
         this.isFrightened = false;
         this.frightenedStartTime = 0;
-        this.frightenedDuration = 10000; // Duração total do estado assustado em milissegundos
-        this.blinkDuration = 2000; // Duração do piscamento em milissegundos
-        this.piscarImediato = false; // Nova variável para controle de piscar imediato
+        this.frightenedDuration = 10000; 
+        this.blinkDuration = 2000; 
+        this.piscarImediato = false;
         this.directions = [
             { x: 1, y: 0 },  // direita
             { x: -1, y: 0 }, // esquerda
             { x: 0, y: 1 },  // baixo
             { x: 0, y: -1 }  // cima
         ];
+
+
+        //math.random() = Gera um número entre 0 e 1
+        //Math.floor = arredonda o número pra baixo. Exemplo 2.7, arredonda pra 2
+        //this.directions.length = Se for 4, o valor estará entre 0 e 4 (não incluindo 4)
+
+        //This.currentDirection = Posição atual
         this.currentDirection = this.directions[Math.floor(Math.random() * this.directions.length)];
-        this.moveSpeed = 0; // Velocidade de movimento
+        this.moveSpeed = 0;
     }
 
     move() {
+
+        //target = alvo
+        //Math.abs() calcula a diferença entre this.x e this.targetX
         if (Math.abs(this.x - this.targetX) < this.moveSpeed && Math.abs(this.y - this.targetY) < this.moveSpeed) {
             this.x = this.targetX;
             this.y = this.targetY;
             this.chooseNewDirection();
         } else {
+
+            //math.sign() retorna o sinal da diferença
             this.x += Math.sign(this.targetX - this.x) * this.moveSpeed;
             this.y += Math.sign(this.targetY - this.y) * this.moveSpeed;
         }
@@ -63,14 +74,14 @@ class Fantasma {
             { x: -this.currentDirection.x, y: -this.currentDirection.y }  // oposta
         ];
 
-        for (let dir of possibleDirections) {
-            const newX = this.x + dir.x * 50;
-            const newY = this.y + dir.y * 50;
+        for (let direcao of possibleDirections) {
+            const newX = this.x + direcao.x * 50;
+            const newY = this.y + direcao.y * 50;
             const mapCol = Math.floor(newX / 50);
             const mapRow = Math.floor(newY / 50);
 
             if (map[mapRow] && map[mapRow][mapCol] != '-' && map[mapRow] && map[mapRow][mapCol] != '0') {
-                this.currentDirection = dir;
+                this.currentDirection = direcao;
                 this.targetX = newX;
                 this.targetY = newY;
                 return;
@@ -124,10 +135,6 @@ class Fantasma {
         }, this.blinkDuration);
     }
 }
-
-
-
-
 
 // Classe Pacman
 class Pacman {
@@ -367,9 +374,9 @@ function verificarColisaoPacManFantasma() {
             } else {
                 // Caso de perda de vida
                 vidas--;
-                if (vidas <= 0) {
+                if (vidas === 0) {
                     alert("Game Over! Pontuação final: " + pontuacao);
-                    window.location.reload(); // Reinicia a página
+                    location.reload(); // Reinicia a página
                 } else {
                     pacmanPosition = { linha: 8, coluna: 10 };
                     pacman.x = pacmanPosition.coluna * 50;
